@@ -463,7 +463,7 @@ ABV_IBU_Medians %&gt;%
   labs(x = &#39;State&#39;, y = &#39;Median ABV&#39;, title = &#39;Median ABV by State&#39;) +
   theme_economist() +
   theme(legend.position = &#39;none&#39;, axis.text.x = element_text(angle = 270, hjust = 1)) </code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre class="r"><code>ABV_IBU_Medians %&gt;% 
   ggplot(aes(x = reorder(State, -Median_IBU,), y = Median_IBU)) + 
   geom_bar(stat = &#39;identity&#39;, fill = &#39;dark green&#39;) +
@@ -471,7 +471,7 @@ ABV_IBU_Medians %&gt;%
   theme_economist() +
   theme(legend.position = &#39;none&#39;, axis.text.x = element_text(angle = 270, hjust = 1))</code></pre>
 <pre><code>## Warning: Removed 1 rows containing missing values (position_stack).</code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-9-2.png" width="672" /> ## Which state has the maximum alcoholic beer? Which state has the most bitter beer?</p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-8-2.png" width="672" /> ## Which state has the maximum alcoholic beer? Which state has the most bitter beer?</p>
 <pre class="r"><code>Beer_Brew_Combo %&gt;% arrange(-ABV) %&gt;% select(Beer_Name, ABV, State) %&gt;% head(1)</code></pre>
 <pre><code>##                                              Beer_Name   ABV State
 ## 1 Lee Hill Series Vol. 5 - Belgian Style Quadrupel Ale 0.128    CO</code></pre>
@@ -505,7 +505,7 @@ Beer_Brew_Combo %&gt;%
   theme(axis.text.y = element_blank(), axis.title.x = element_text(size = 15),legend.position = &#39;none&#39;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <pre><code>## Warning: Removed 62 rows containing non-finite values (stat_bin).</code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <pre class="r"><code>Beer_Brew_Combo %&gt;% 
   ggplot(aes(x = ABV)) + 
   geom_boxplot(fill = &#39;dark green&#39;, color = &#39;black&#39;) +
@@ -513,7 +513,7 @@ Beer_Brew_Combo %&gt;%
   theme_economist() +
   theme(axis.text.y = element_blank(), axis.title.x = element_text(size = 15),legend.position = &#39;none&#39;)</code></pre>
 <pre><code>## Warning: Removed 62 rows containing non-finite values (stat_boxplot).</code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
 <div id="the-lack-of-difference-between-the-mean-and-the-10-trimmed-mean-tells-us-there-are-minimal-outliers-in-the-data." class="section level3">
 <h3>The lack of difference between the mean and the 10% trimmed mean tells us there are minimal outliers in the data.</h3>
 </div>
@@ -532,7 +532,7 @@ Beer_Brew_Combo %&gt;%
   theme_economist() +
   theme(axis.title.y = element_text(size = 15), axis.title.x = element_text(size = 15),legend.position = &#39;none&#39;)</code></pre>
 <pre><code>## Warning: Removed 1005 rows containing missing values (geom_point).</code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <div id="based-on-a-visual-inspection-of-the-scatter-plot-there-appears-to-be-a-slight-positive-correlation-between-ibu-and-abv" class="section level3">
 <h3>Based on a visual inspection of the scatter plot, there appears to be a slight positive correlation between IBU and ABV</h3>
 </div>
@@ -597,7 +597,7 @@ print(accuracy_df %&gt;% arrange(-accuracy) %&gt;% head())</code></pre>
   labs(title = &#39;Accuracy by K value&#39;) +
   theme_economist() +
   theme(legend.position = &#39;none&#39;) </code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-13-1.png" width="672" /> ### Highest accuracy occurs when k = 2 or 14, so we will go with 14</p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-12-1.png" width="672" /> ### Highest accuracy occurs when k = 2 or 14, so we will go with 14</p>
 <pre class="r"><code>set.seed(67)
 
 classifications = knn(train_df[, c(12,13)],
@@ -651,7 +651,7 @@ test_df %&gt;%
   geom_point(aes(shape = isIPA)) + 
   theme_economist() +
   labs(title = &#39;IBU vs ABV&#39;, color = &#39;Correctly Classified?&#39;, shape = &#39;Is an IPA?&#39;)</code></pre>
-<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="DDS_JR_LM2_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
 

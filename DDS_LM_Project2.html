@@ -324,24 +324,14 @@ library(class)</code></pre>
                          header = T)
 
 colnames(data)</code></pre>
-<pre><code>##  [1] &quot;ID&quot;                       &quot;Age&quot;                     
-##  [3] &quot;Attrition&quot;                &quot;BusinessTravel&quot;          
-##  [5] &quot;DailyRate&quot;                &quot;Department&quot;              
-##  [7] &quot;DistanceFromHome&quot;         &quot;Education&quot;               
-##  [9] &quot;EducationField&quot;           &quot;EmployeeCount&quot;           
-## [11] &quot;EmployeeNumber&quot;           &quot;EnvironmentSatisfaction&quot; 
-## [13] &quot;Gender&quot;                   &quot;HourlyRate&quot;              
-## [15] &quot;JobInvolvement&quot;           &quot;JobLevel&quot;                
-## [17] &quot;JobRole&quot;                  &quot;JobSatisfaction&quot;         
-## [19] &quot;MaritalStatus&quot;            &quot;MonthlyIncome&quot;           
-## [21] &quot;MonthlyRate&quot;              &quot;NumCompaniesWorked&quot;      
-## [23] &quot;Over18&quot;                   &quot;OverTime&quot;                
-## [25] &quot;PercentSalaryHike&quot;        &quot;PerformanceRating&quot;       
-## [27] &quot;RelationshipSatisfaction&quot; &quot;StandardHours&quot;           
-## [29] &quot;StockOptionLevel&quot;         &quot;TotalWorkingYears&quot;       
-## [31] &quot;TrainingTimesLastYear&quot;    &quot;WorkLifeBalance&quot;         
-## [33] &quot;YearsAtCompany&quot;           &quot;YearsInCurrentRole&quot;      
-## [35] &quot;YearsSinceLastPromotion&quot;  &quot;YearsWithCurrManager&quot;</code></pre>
+<pre><code>##  [1] &quot;ID&quot;                       &quot;Age&quot;                      &quot;Attrition&quot;                &quot;BusinessTravel&quot;           &quot;DailyRate&quot;               
+##  [6] &quot;Department&quot;               &quot;DistanceFromHome&quot;         &quot;Education&quot;                &quot;EducationField&quot;           &quot;EmployeeCount&quot;           
+## [11] &quot;EmployeeNumber&quot;           &quot;EnvironmentSatisfaction&quot;  &quot;Gender&quot;                   &quot;HourlyRate&quot;               &quot;JobInvolvement&quot;          
+## [16] &quot;JobLevel&quot;                 &quot;JobRole&quot;                  &quot;JobSatisfaction&quot;          &quot;MaritalStatus&quot;            &quot;MonthlyIncome&quot;           
+## [21] &quot;MonthlyRate&quot;              &quot;NumCompaniesWorked&quot;       &quot;Over18&quot;                   &quot;OverTime&quot;                 &quot;PercentSalaryHike&quot;       
+## [26] &quot;PerformanceRating&quot;        &quot;RelationshipSatisfaction&quot; &quot;StandardHours&quot;            &quot;StockOptionLevel&quot;         &quot;TotalWorkingYears&quot;       
+## [31] &quot;TrainingTimesLastYear&quot;    &quot;WorkLifeBalance&quot;          &quot;YearsAtCompany&quot;           &quot;YearsInCurrentRole&quot;       &quot;YearsSinceLastPromotion&quot; 
+## [36] &quot;YearsWithCurrManager&quot;</code></pre>
 </div>
 <div id="transforming-data" class="section level2">
 <h2>Transforming Data</h2>
@@ -392,17 +382,17 @@ data %&gt;%
   ) %&gt;%
   arrange(-AverageJobSat)</code></pre>
 <pre><code>## # A tibble: 9 x 5
-##   JobRole              TurnoverCount EmployeeCount TurnoverPercent AverageJobSat
-##   &lt;fct&gt;                        &lt;dbl&gt;         &lt;int&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Healthcare Represen~             8            76          0.105           2.83
-## 2 Research Scientist              32           172          0.186           2.80
-## 3 Sales Executive                 33           200          0.165           2.72
-## 4 Manufacturing Direc~             2            87          0.023           2.72
-## 5 Sales Representative            24            53          0.453           2.70
-## 6 Laboratory Technici~            30           153          0.196           2.69
-## 7 Human Resources                  6            27          0.222           2.56
-## 8 Manager                          4            51          0.0784          2.51
-## 9 Research Director                1            51          0.0196          2.49</code></pre>
+##   JobRole                   TurnoverCount EmployeeCount TurnoverPercent AverageJobSat
+##   &lt;fct&gt;                             &lt;dbl&gt;         &lt;int&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1 Healthcare Representative             8            76          0.105           2.83
+## 2 Research Scientist                   32           172          0.186           2.80
+## 3 Sales Executive                      33           200          0.165           2.72
+## 4 Manufacturing Director                2            87          0.023           2.72
+## 5 Sales Representative                 24            53          0.453           2.70
+## 6 Laboratory Technician                30           153          0.196           2.69
+## 7 Human Resources                       6            27          0.222           2.56
+## 8 Manager                               4            51          0.0784          2.51
+## 9 Research Director                     1            51          0.0196          2.49</code></pre>
 <pre class="r"><code>data %&gt;%
   dplyr::select(Attrition, Gender, JobLevel) %&gt;%
   filter(Attrition == &#39;Yes&#39;) %&gt;%
@@ -744,44 +734,25 @@ summary(step_linear_model)</code></pre>
 ## -3002.8  -616.0   -92.5   616.1  4113.3 
 ## 
 ## Coefficients:
-##                                   Estimate Std. Error t value
-## (Intercept)                      3108.8725   264.1249  11.770
-## BusinessTravelTravel_Frequently   -26.9121   159.3266  -0.169
-## BusinessTravelTravel_Rarely       205.6971   134.3544   1.531
-## DailyRate                           0.2341     0.1014   2.308
-## GenderMale                        124.9316    82.6958   1.511
-## JobLevel2                        1855.8046   165.5301  11.211
-## JobLevel3                        5185.8938   220.4970  23.519
-## JobLevel4                        8545.6819   328.8593  25.986
-## JobLevel5                       11210.6249   402.0333  27.885
-## JobRoleHuman Resources          -1052.7841   282.2195  -3.730
-## JobRoleLaboratory Technician    -1087.6859   205.0241  -5.305
-## JobRoleManager                   3384.7098   283.1562  11.954
-## JobRoleManufacturing Director      40.4401   183.2379   0.221
-## JobRoleResearch Director         3424.1054   259.4474  13.198
-## JobRoleResearch Scientist        -921.0786   205.8215  -4.475
-## JobRoleSales Executive           -172.4710   154.9798  -1.113
-## JobRoleSales Representative     -1069.2055   250.8638  -4.262
-## TotalWorkingYears                  39.6384     8.9743   4.417
-##                                             Pr(&gt;|t|)    
-## (Intercept)                     &lt; 0.0000000000000002 ***
-## BusinessTravelTravel_Frequently              0.86592    
-## BusinessTravelTravel_Rarely                  0.12630    
-## DailyRate                                    0.02136 *  
-## GenderMale                                   0.13139    
-## JobLevel2                       &lt; 0.0000000000000002 ***
-## JobLevel3                       &lt; 0.0000000000000002 ***
-## JobLevel4                       &lt; 0.0000000000000002 ***
-## JobLevel5                       &lt; 0.0000000000000002 ***
-## JobRoleHuman Resources                       0.00021 ***
-## JobRoleLaboratory Technician             0.000000159 ***
-## JobRoleManager                  &lt; 0.0000000000000002 ***
-## JobRoleManufacturing Director                0.82540    
-## JobRoleResearch Director        &lt; 0.0000000000000002 ***
-## JobRoleResearch Scientist                0.000009163 ***
-## JobRoleSales Executive                       0.26622    
-## JobRoleSales Representative              0.000023568 ***
-## TotalWorkingYears                        0.000011911 ***
+##                                   Estimate Std. Error t value             Pr(&gt;|t|)    
+## (Intercept)                      3108.8725   264.1249  11.770 &lt; 0.0000000000000002 ***
+## BusinessTravelTravel_Frequently   -26.9121   159.3266  -0.169              0.86592    
+## BusinessTravelTravel_Rarely       205.6971   134.3544   1.531              0.12630    
+## DailyRate                           0.2341     0.1014   2.308              0.02136 *  
+## GenderMale                        124.9316    82.6958   1.511              0.13139    
+## JobLevel2                        1855.8046   165.5301  11.211 &lt; 0.0000000000000002 ***
+## JobLevel3                        5185.8938   220.4970  23.519 &lt; 0.0000000000000002 ***
+## JobLevel4                        8545.6819   328.8593  25.986 &lt; 0.0000000000000002 ***
+## JobLevel5                       11210.6249   402.0333  27.885 &lt; 0.0000000000000002 ***
+## JobRoleHuman Resources          -1052.7841   282.2195  -3.730              0.00021 ***
+## JobRoleLaboratory Technician    -1087.6859   205.0241  -5.305          0.000000159 ***
+## JobRoleManager                   3384.7098   283.1562  11.954 &lt; 0.0000000000000002 ***
+## JobRoleManufacturing Director      40.4401   183.2379   0.221              0.82540    
+## JobRoleResearch Director         3424.1054   259.4474  13.198 &lt; 0.0000000000000002 ***
+## JobRoleResearch Scientist        -921.0786   205.8215  -4.475          0.000009163 ***
+## JobRoleSales Executive           -172.4710   154.9798  -1.113              0.26622    
+## JobRoleSales Representative     -1069.2055   250.8638  -4.262          0.000023568 ***
+## TotalWorkingYears                  39.6384     8.9743   4.417          0.000011911 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
