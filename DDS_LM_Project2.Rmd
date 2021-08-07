@@ -2,9 +2,9 @@
 title: "LM_DDS_Project2"
 author: "Logan Miller"
 date: "8/4/2021"
-output:
-  html_document: default
-  pdf_document: default
+output: 
+  html_document:
+    toc: true #specifies output settings for output types, this one specifies no table of contents
 ---
 
 ```{r setup, include=FALSE}
@@ -12,9 +12,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Executive Summary
-Summary
 
-### Import Relevant Packages
+The goal of this analysis is to provide insights regarding attrition, monthly income, and other metrics. The data and subsequent analysis suggest, but do not necessarily prove, the following:
+
+* Sales representatives have the highest attrition rate by far at 45%
+  + This is to be expected since sales is a highly volatile division in general but still something to look at
+* Longer commutes appears to lead to higher attrition
+  + When opening locations, try to position it as close to potential employees as possible
+* It does not appear like non-exempt employees have a lower job satisfaction than exempt employees
+* Out of logistic regression, knn, and naive bayes, naive bayes was the best at classify attrition
+* With the given variables, a linear regression with stepwise selection achieved an impressive adjusted R-squared of 95%
+
+
+## Import Relevant Packages
 ```{r, message = FALSE}
 
 library(dplyr)
@@ -30,7 +40,7 @@ library(psych)
 library(class)
 ```
 
-### Import Data
+## Import Data
 
 ```{r}
 data = read.csv(file = "https://raw.githubusercontent.com/xloganmiller/CaseStudy2DDS/main/CaseStudy2-data.csv",
@@ -39,7 +49,7 @@ data = read.csv(file = "https://raw.githubusercontent.com/xloganmiller/CaseStudy
 
 colnames(data)
 ```
-### Transforming Data 
+## Transforming Data 
 ```{r}
 data$JobSatisfaction = factor(data$JobSatisfaction)
 data$EnvironmentSatisfaction = factor(data$EnvironmentSatisfaction)
@@ -62,7 +72,7 @@ scaled_data[, numeric_columns] = scale(scaled_data[, numeric_columns])
 
 ```
 
-### Visualizing Continuous Variables
+## Visualizing Continuous Variables
 ```{r, fig.height=10, fig.width=13, fig.align='center'}
 filtered_data %>% 
   select_if(is.numeric) %>%
@@ -74,10 +84,10 @@ filtered_data %>%
   
 ```
 
-#### Variables have different distributions so we will need to use the scaled data in KNN
+Variables have different distributions so we will need to use the scaled data in KNN
 
 
-### Key averages by job role
+## Key averages by job role
 ```{r}
 data = data %>% mutate(AttritionValue = ifelse(Attrition == 'Yes', 1, 0))
 
@@ -127,9 +137,9 @@ data %>%
 
 summary(data$Attrition)
 ```
-#### Research Director lowest average job satisfaction. Sales Representatives have extremely high turnover.
+Research Director lowest average job satisfaction. Sales Representatives have extremely high turnover.
 
-### Split into train and test sets for regressions
+##Split into train and test sets for regressions
 
 ```{r}
 set.seed(66)
@@ -141,7 +151,7 @@ test_df = filtered_data[-train_index, ]
 
 ```
 
-### Logistic Regression
+## Logistic Regression
 ```{r warning = FALSE, message=FALSE, results='hide'}
 options(warn = 1)
 
@@ -181,9 +191,9 @@ cm = caret::confusionMatrix(table(test_preds, test_df$Attrition))
 cm
 
 ```
-#### Logit regression does a decent job of predicting attrition. However, it struggles more with correctly predicting employees who left their jobs than vice versa.
+Logit regression does a decent job of predicting attrition. However, it struggles more with correctly predicting employees who left their jobs than vice versa.
 
-### KNN Clustering
+## KNN Clustering
 ```{r warning = FALSE, message=FALSE}
 factor_names = filtered_data %>% dplyr::select(-Attrition)  %>% select_if(is.factor) %>% colnames()
 
@@ -253,17 +263,16 @@ for(i in 1:20) {
 
 knn_test_comparision
 ```
-#### Decent overall accuracy but poor specifity, presumably due to KNN's shortcomings when it comes to categorical variables
+Decent overall accuracy but poor specifity, presumably due to KNN's shortcomings when it comes to categorical variables
 
 
-### NaiveBayes
+## NaiveBayes
 ```{r}
 nb_train = scaled_data[train_index,]
 nb_test = scaled_data[-train_index,]
 
 nb_model = naiveBayes(Attrition ~. , data = nb_train)
 
-nb_model
 
 nb_preds = predict(nb_model, nb_test, type = 'class')
 
@@ -297,7 +306,7 @@ for(i in 1:20) {
 nb_test_comparision %>% gather() %>% group_by(key) %>% summarise(average = mean(value))
 
 ```
-#### Similar accuracy to the KNN model but the NB model is much more well balanced and the difference between the sensitivity and specifity averages over 20 iterations is much smaller.
+Similar accuracy to the KNN model but the NB model is much more well balanced and the difference between the sensitivity and specifity averages over 20 iterations is much smaller.
 
 ```{r, include=FALSE, eval=FALSE}
 other_new_data = read.csv(file = "https://raw.githubusercontent.com/xloganmiller/CaseStudy2DDS/main/CaseStudy2CompSet%20No%20Attrition.csv",
@@ -338,7 +347,7 @@ write.csv(
 )
 ```
 
-### Linear Regression to Predict Salary
+## Linear Regression to Predict Salary
 ```{r}
 linear_model = lm(MonthlyIncome ~. , data = train_df)
 
@@ -391,9 +400,9 @@ write.csv(new_data %>% dplyr::select(ID, MonthlyIncome)
           , row.names = FALSE)
 ```
 
-#### Using stepwise selection, the linear regression model was able to achieve an impressive 95.24% r-squared and the r-squared for the test set was pretty much the same, suggesting that even though the r-squared is very high, the model is not overfitting. The adjusted r-squared is essentially the same as the r-squared, so the model is able to explain a significant amount of variance with minimal variables.
+Using stepwise selection, the linear regression model was able to achieve an impressive 95.24% r-squared and the r-squared for the test set was pretty much the same, suggesting that even though the r-squared is very high, the model is not overfitting. The adjusted r-squared is essentially the same as the r-squared, so the model is able to explain a significant amount of variance with minimal variables.
 
-### Testing if employees who left had a different average commute distance than employees who haven't left
+## Testing if employees who left had a different average commute distance than employees who haven't left
 
 ```{r}
 data %>% 
@@ -427,9 +436,9 @@ att_ttest = t.test(DistanceFromHome ~ Attrition, var.equal = FALSE, alternative 
 att_ttest
 
 ```
-#### Due to the large sample sizes, the Central Limit Thereom is met and because we cannot assume equal variances, I proceeded to conduct a Welch's two sample t-test. Based on the results of the test, we are 95% that the true difference in means is not equal 0. Furthermore, since the mean travel distance for those who left is larger than those who didn't, we can say with 95% that the mean travel distance for employees who left their job is greater than the mean travel distance of employees who remain at their job, p-value = 0.01641.
+ Due to the large sample sizes, the Central Limit Thereom is met and because we cannot assume equal variances, I proceeded to conduct a Welch's two sample t-test. Based on the results of the test, we are 95% that the true difference in means is not equal 0. Furthermore, since the mean travel distance for those who left is larger than those who didn't, we can say with 95% that the mean travel distance for employees who left their job is greater than the mean travel distance of employees who remain at their job, p-value = 0.01641.
 
-### Permutation Test for comparing Job Satisfaction for employees who work overtime vs those who don't
+## Permutation Test for comparing Job Satisfaction for employees who work overtime vs those who don't
 ```{r, message=FALSE, warning=FALSE}
 permutation_test = function(df,categorical_column, result_column, number_permutations = 10000) {
   
@@ -498,5 +507,5 @@ wilcox.test(x = as.numeric(x$JobSatisfaction),
             conf.level = .95)
                 
 ```
-#### If JobSatisfaction rankings were randomly assigned to employees, regardless of whether they worked overtime or not, we would expect to see an difference in means as extreme or more extreme than our observed mean difference 32.9% of the time, suggesting there is not a significant difference in job satisfaction between employees who work overtime and those who do not. A wilcox ranked sum test also failed to reject the null of no difference in centers, median in this case.
+If JobSatisfaction rankings were randomly assigned to employees, regardless of whether they worked overtime or not, we would expect to see an difference in means as extreme or more extreme than our observed mean difference 32.9% of the time, suggesting there is not a significant difference in job satisfaction between employees who work overtime and those who do not. A wilcox ranked sum test also failed to reject the null of no difference in centers, median in this case.
 

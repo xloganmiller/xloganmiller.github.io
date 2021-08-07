@@ -269,12 +269,42 @@ $(document).ready(function () {
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#executive-summary">Executive Summary</a></li>
+<li><a href="#import-relevant-packages">Import Relevant Packages</a></li>
+<li><a href="#import-data">Import Data</a></li>
+<li><a href="#transforming-data">Transforming Data</a></li>
+<li><a href="#visualizing-continuous-variables">Visualizing Continuous Variables</a></li>
+<li><a href="#key-averages-by-job-role">Key averages by job role</a></li>
+<li><a href="#logistic-regression">Logistic Regression</a></li>
+<li><a href="#knn-clustering">KNN Clustering</a></li>
+<li><a href="#naivebayes">NaiveBayes</a></li>
+<li><a href="#linear-regression-to-predict-salary">Linear Regression to Predict Salary</a></li>
+<li><a href="#testing-if-employees-who-left-had-a-different-average-commute-distance-than-employees-who-havent-left">Testing if employees who left had a different average commute distance than employees who haven’t left</a></li>
+<li><a href="#permutation-test-for-comparing-job-satisfaction-for-employees-who-work-overtime-vs-those-who-dont">Permutation Test for comparing Job Satisfaction for employees who work overtime vs those who don’t</a></li>
+</ul>
+</div>
 
 <div id="executive-summary" class="section level2">
 <h2>Executive Summary</h2>
-<p>Summary</p>
-<div id="import-relevant-packages" class="section level3">
-<h3>Import Relevant Packages</h3>
+<p>The goal of this analysis is to provide insights regarding attrition, monthly income, and other metrics. The data and subsequent analysis suggest, but do not necessarily prove, the following:</p>
+<ul>
+<li>Sales representatives have the highest attrition rate by far at 45%
+<ul>
+<li>This is to be expected since sales is a highly volatile division in general but still something to look at</li>
+</ul></li>
+<li>Longer commutes appears to lead to higher attrition
+<ul>
+<li>When opening locations, try to position it as close to potential employees as possible</li>
+</ul></li>
+<li>It does not appear like non-exempt employees have a lower job satisfaction than exempt employees</li>
+<li>Out of logistic regression, knn, and naive bayes, naive bayes was the best at classify attrition</li>
+<li>With the given variables, a linear regression with stepwise selection achieved an impressive adjusted R-squared of 95%</li>
+</ul>
+</div>
+<div id="import-relevant-packages" class="section level2">
+<h2>Import Relevant Packages</h2>
 <pre class="r"><code>library(dplyr)
 library(tidyverse)
 library(ggplot2)
@@ -287,24 +317,34 @@ library(olsrr)
 library(psych)
 library(class)</code></pre>
 </div>
-<div id="import-data" class="section level3">
-<h3>Import Data</h3>
+<div id="import-data" class="section level2">
+<h2>Import Data</h2>
 <pre class="r"><code>data = read.csv(file = &quot;https://raw.githubusercontent.com/xloganmiller/CaseStudy2DDS/main/CaseStudy2-data.csv&quot;,
                          stringsAsFactors = T,
                          header = T)
 
 colnames(data)</code></pre>
-<pre><code>##  [1] &quot;ID&quot;                       &quot;Age&quot;                      &quot;Attrition&quot;                &quot;BusinessTravel&quot;           &quot;DailyRate&quot;               
-##  [6] &quot;Department&quot;               &quot;DistanceFromHome&quot;         &quot;Education&quot;                &quot;EducationField&quot;           &quot;EmployeeCount&quot;           
-## [11] &quot;EmployeeNumber&quot;           &quot;EnvironmentSatisfaction&quot;  &quot;Gender&quot;                   &quot;HourlyRate&quot;               &quot;JobInvolvement&quot;          
-## [16] &quot;JobLevel&quot;                 &quot;JobRole&quot;                  &quot;JobSatisfaction&quot;          &quot;MaritalStatus&quot;            &quot;MonthlyIncome&quot;           
-## [21] &quot;MonthlyRate&quot;              &quot;NumCompaniesWorked&quot;       &quot;Over18&quot;                   &quot;OverTime&quot;                 &quot;PercentSalaryHike&quot;       
-## [26] &quot;PerformanceRating&quot;        &quot;RelationshipSatisfaction&quot; &quot;StandardHours&quot;            &quot;StockOptionLevel&quot;         &quot;TotalWorkingYears&quot;       
-## [31] &quot;TrainingTimesLastYear&quot;    &quot;WorkLifeBalance&quot;          &quot;YearsAtCompany&quot;           &quot;YearsInCurrentRole&quot;       &quot;YearsSinceLastPromotion&quot; 
-## [36] &quot;YearsWithCurrManager&quot;</code></pre>
+<pre><code>##  [1] &quot;ID&quot;                       &quot;Age&quot;                     
+##  [3] &quot;Attrition&quot;                &quot;BusinessTravel&quot;          
+##  [5] &quot;DailyRate&quot;                &quot;Department&quot;              
+##  [7] &quot;DistanceFromHome&quot;         &quot;Education&quot;               
+##  [9] &quot;EducationField&quot;           &quot;EmployeeCount&quot;           
+## [11] &quot;EmployeeNumber&quot;           &quot;EnvironmentSatisfaction&quot; 
+## [13] &quot;Gender&quot;                   &quot;HourlyRate&quot;              
+## [15] &quot;JobInvolvement&quot;           &quot;JobLevel&quot;                
+## [17] &quot;JobRole&quot;                  &quot;JobSatisfaction&quot;         
+## [19] &quot;MaritalStatus&quot;            &quot;MonthlyIncome&quot;           
+## [21] &quot;MonthlyRate&quot;              &quot;NumCompaniesWorked&quot;      
+## [23] &quot;Over18&quot;                   &quot;OverTime&quot;                
+## [25] &quot;PercentSalaryHike&quot;        &quot;PerformanceRating&quot;       
+## [27] &quot;RelationshipSatisfaction&quot; &quot;StandardHours&quot;           
+## [29] &quot;StockOptionLevel&quot;         &quot;TotalWorkingYears&quot;       
+## [31] &quot;TrainingTimesLastYear&quot;    &quot;WorkLifeBalance&quot;         
+## [33] &quot;YearsAtCompany&quot;           &quot;YearsInCurrentRole&quot;      
+## [35] &quot;YearsSinceLastPromotion&quot;  &quot;YearsWithCurrManager&quot;</code></pre>
 </div>
-<div id="transforming-data" class="section level3">
-<h3>Transforming Data</h3>
+<div id="transforming-data" class="section level2">
+<h2>Transforming Data</h2>
 <pre class="r"><code>data$JobSatisfaction = factor(data$JobSatisfaction)
 data$EnvironmentSatisfaction = factor(data$EnvironmentSatisfaction)
 data$JobRole = factor(data$JobRole)
@@ -324,8 +364,8 @@ scaled_data = filtered_data
 
 scaled_data[, numeric_columns] = scale(scaled_data[, numeric_columns])</code></pre>
 </div>
-<div id="visualizing-continuous-variables" class="section level3">
-<h3>Visualizing Continuous Variables</h3>
+<div id="visualizing-continuous-variables" class="section level2">
+<h2>Visualizing Continuous Variables</h2>
 <pre class="r"><code>filtered_data %&gt;% 
   select_if(is.numeric) %&gt;%
   gather() %&gt;%
@@ -334,12 +374,10 @@ scaled_data[, numeric_columns] = scale(scaled_data[, numeric_columns])</code></p
   facet_wrap(~key, scales = &#39;free&#39;) +
   theme_economist()</code></pre>
 <p><img src="DDS_LM_Project2_files/figure-html/unnamed-chunk-4-1.png" width="1248" style="display: block; margin: auto;" /></p>
-<div id="variables-have-different-distributions-so-we-will-need-to-use-the-scaled-data-in-knn" class="section level4">
-<h4>Variables have different distributions so we will need to use the scaled data in KNN</h4>
+<p>Variables have different distributions so we will need to use the scaled data in KNN</p>
 </div>
-</div>
-<div id="key-averages-by-job-role" class="section level3">
-<h3>Key averages by job role</h3>
+<div id="key-averages-by-job-role" class="section level2">
+<h2>Key averages by job role</h2>
 <pre class="r"><code>data = data %&gt;% mutate(AttritionValue = ifelse(Attrition == &#39;Yes&#39;, 1, 0))
 
 data %&gt;%
@@ -354,17 +392,17 @@ data %&gt;%
   ) %&gt;%
   arrange(-AverageJobSat)</code></pre>
 <pre><code>## # A tibble: 9 x 5
-##   JobRole                   TurnoverCount EmployeeCount TurnoverPercent AverageJobSat
-##   &lt;fct&gt;                             &lt;dbl&gt;         &lt;int&gt;           &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Healthcare Representative             8            76          0.105           2.83
-## 2 Research Scientist                   32           172          0.186           2.80
-## 3 Sales Executive                      33           200          0.165           2.72
-## 4 Manufacturing Director                2            87          0.023           2.72
-## 5 Sales Representative                 24            53          0.453           2.70
-## 6 Laboratory Technician                30           153          0.196           2.69
-## 7 Human Resources                       6            27          0.222           2.56
-## 8 Manager                               4            51          0.0784          2.51
-## 9 Research Director                     1            51          0.0196          2.49</code></pre>
+##   JobRole              TurnoverCount EmployeeCount TurnoverPercent AverageJobSat
+##   &lt;fct&gt;                        &lt;dbl&gt;         &lt;int&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+## 1 Healthcare Represen~             8            76          0.105           2.83
+## 2 Research Scientist              32           172          0.186           2.80
+## 3 Sales Executive                 33           200          0.165           2.72
+## 4 Manufacturing Direc~             2            87          0.023           2.72
+## 5 Sales Representative            24            53          0.453           2.70
+## 6 Laboratory Technici~            30           153          0.196           2.69
+## 7 Human Resources                  6            27          0.222           2.56
+## 8 Manager                          4            51          0.0784          2.51
+## 9 Research Director                1            51          0.0196          2.49</code></pre>
 <pre class="r"><code>data %&gt;%
   dplyr::select(Attrition, Gender, JobLevel) %&gt;%
   filter(Attrition == &#39;Yes&#39;) %&gt;%
@@ -408,12 +446,8 @@ data %&gt;%
 <pre class="r"><code>summary(data$Attrition)</code></pre>
 <pre><code>##  No Yes 
 ## 730 140</code></pre>
-<div id="research-director-lowest-average-job-satisfaction.-sales-representatives-have-extremely-high-turnover." class="section level4">
-<h4>Research Director lowest average job satisfaction. Sales Representatives have extremely high turnover.</h4>
-</div>
-</div>
-<div id="split-into-train-and-test-sets-for-regressions" class="section level3">
-<h3>Split into train and test sets for regressions</h3>
+<p>Research Director lowest average job satisfaction. Sales Representatives have extremely high turnover.</p>
+<p>##Split into train and test sets for regressions</p>
 <pre class="r"><code>set.seed(66)
 
 sample_size = floor(.70 * nrow(filtered_data))
@@ -421,8 +455,8 @@ train_index = sample(seq_len(nrow(filtered_data)), size = sample_size)
 train_df = filtered_data[train_index, ]
 test_df = filtered_data[-train_index, ]</code></pre>
 </div>
-<div id="logistic-regression" class="section level3">
-<h3>Logistic Regression</h3>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
 <pre class="r"><code>options(warn = 1)
 
 logit_model = glm(
@@ -527,12 +561,10 @@ cm</code></pre>
 ##                                           
 ##        &#39;Positive&#39; Class : No              
 ## </code></pre>
-<div id="logit-regression-does-a-decent-job-of-predicting-attrition.-however-it-struggles-more-with-correctly-predicting-employees-who-left-their-jobs-than-vice-versa." class="section level4">
-<h4>Logit regression does a decent job of predicting attrition. However, it struggles more with correctly predicting employees who left their jobs than vice versa.</h4>
+<p>Logit regression does a decent job of predicting attrition. However, it struggles more with correctly predicting employees who left their jobs than vice versa.</p>
 </div>
-</div>
-<div id="knn-clustering" class="section level3">
-<h3>KNN Clustering</h3>
+<div id="knn-clustering" class="section level2">
+<h2>KNN Clustering</h2>
 <pre class="r"><code>factor_names = filtered_data %&gt;% dplyr::select(-Attrition)  %&gt;% select_if(is.factor) %&gt;% colnames()
 
 
@@ -621,184 +653,17 @@ knn_test_comparision</code></pre>
 ## 18 18   0.8544      1.0000      0.0256
 ## 19 19   0.8506      0.9955      0.0256
 ## 20 20   0.8582      1.0000      0.0513</code></pre>
-<div id="decent-overall-accuracy-but-poor-specifity-presumably-due-to-knns-shortcomings-when-it-comes-to-categorical-variables" class="section level4">
-<h4>Decent overall accuracy but poor specifity, presumably due to KNN’s shortcomings when it comes to categorical variables</h4>
+<p>Decent overall accuracy but poor specifity, presumably due to KNN’s shortcomings when it comes to categorical variables</p>
 </div>
-</div>
-<div id="naivebayes" class="section level3">
-<h3>NaiveBayes</h3>
+<div id="naivebayes" class="section level2">
+<h2>NaiveBayes</h2>
 <pre class="r"><code>nb_train = scaled_data[train_index,]
 nb_test = scaled_data[-train_index,]
 
 nb_model = naiveBayes(Attrition ~. , data = nb_train)
 
-nb_model</code></pre>
-<pre><code>## 
-## Naive Bayes Classifier for Discrete Predictors
-## 
-## Call:
-## naiveBayes.default(x = X, y = Y, laplace = laplace)
-## 
-## A-priori probabilities:
-## Y
-##        No       Yes 
-## 0.8341544 0.1658456 
-## 
-## Conditional probabilities:
-##      Age
-## Y            [,1]      [,2]
-##   No   0.06880811 0.9876364
-##   Yes -0.43559973 1.0662355
-## 
-##      BusinessTravel
-## Y     Non-Travel Travel_Frequently Travel_Rarely
-##   No  0.11023622        0.15354331    0.73622047
-##   Yes 0.06930693        0.26732673    0.66336634
-## 
-##      DailyRate
-## Y            [,1]      [,2]
-##   No  -0.01871065 0.9948790
-##   Yes -0.09641376 0.9646474
-## 
-##      Department
-## Y     Human Resources Research &amp; Development      Sales
-##   No       0.04527559             0.66141732 0.29330709
-##   Yes      0.03960396             0.52475248 0.43564356
-## 
-##      DistanceFromHome
-## Y            [,1]      [,2]
-##   No  -0.06755934 0.9828424
-##   Yes  0.18344071 1.0603731
-## 
-##      Education
-## Y              1          2          3          4          5
-##   No  0.10629921 0.21456693 0.37401575 0.27165354 0.03346457
-##   Yes 0.11881188 0.23762376 0.38613861 0.24752475 0.00990099
-## 
-##      EducationField
-## Y     Human Resources Life Sciences  Marketing    Medical      Other Technical Degree
-##   No       0.01181102    0.41141732 0.10236220 0.31692913 0.07086614       0.08661417
-##   Yes      0.01980198    0.38613861 0.12871287 0.26732673 0.07920792       0.11881188
-## 
-##      EnvironmentSatisfaction
-## Y             1         2         3         4
-##   No  0.1673228 0.2027559 0.3090551 0.3208661
-##   Yes 0.2970297 0.1980198 0.2277228 0.2772277
-## 
-##      Gender
-## Y        Female      Male
-##   No  0.4212598 0.5787402
-##   Yes 0.3960396 0.6039604
-## 
-##      HourlyRate
-## Y            [,1]      [,2]
-##   No  -0.03323425 1.0015942
-##   Yes  0.02066411 0.9722724
-## 
-##      JobInvolvement
-## Y              1          2          3          4
-##   No  0.03740157 0.24015748 0.60629921 0.11614173
-##   Yes 0.15841584 0.31683168 0.50495050 0.01980198
-## 
-##      JobLevel
-## Y              1          2          3          4          5
-##   No  0.33661417 0.38582677 0.14960630 0.08070866 0.04724409
-##   Yes 0.65346535 0.19801980 0.12871287 0.01980198 0.00000000
-## 
-##      JobRole
-## Y     Healthcare Representative Human Resources Laboratory Technician    Manager Manufacturing Director Research Director Research Scientist
-##   No                 0.10236220      0.03740157            0.15551181 0.06299213             0.11417323        0.06102362         0.19488189
-##   Yes                0.06930693      0.03960396            0.21782178 0.00000000             0.00000000        0.00000000         0.23762376
-##      JobRole
-## Y     Sales Executive Sales Representative
-##   No       0.22637795           0.04527559
-##   Yes      0.24752475           0.18811881
-## 
-##      JobSatisfaction
-## Y             1         2         3         4
-##   No  0.1988189 0.1968504 0.2933071 0.3110236
-##   Yes 0.2772277 0.2079208 0.3168317 0.1980198
-## 
-##      MaritalStatus
-## Y       Divorced    Married     Single
-##   No  0.24212598 0.47440945 0.28346457
-##   Yes 0.06930693 0.42574257 0.50495050
-## 
-##      MonthlyIncome
-## Y            [,1]      [,2]
-##   No   0.05609267 1.0197083
-##   Yes -0.47184353 0.5895785
-## 
-##      MonthlyRate
-## Y            [,1]      [,2]
-##   No   0.01492823 1.0007603
-##   Yes -0.10756467 0.9983608
-## 
-##      NumCompaniesWorked
-## Y             [,1]      [,2]
-##   No  -0.008289532 0.9910353
-##   Yes  0.112009986 1.1214859
-## 
-##      OverTime
-## Y            No       Yes
-##   No  0.7696850 0.2303150
-##   Yes 0.4158416 0.5841584
-## 
-##      PercentSalaryHike
-## Y            [,1]     [,2]
-##   No  0.005034482 1.014478
-##   Yes 0.093745085 1.122805
-## 
-##      PerformanceRating
-## Y             3         4
-##   No  0.8405512 0.1594488
-##   Yes 0.8118812 0.1881188
-## 
-##      RelationshipSatisfaction
-## Y             1         2         3         4
-##   No  0.1929134 0.1948819 0.3090551 0.3031496
-##   Yes 0.2376238 0.2178218 0.2871287 0.2574257
-## 
-##      StockOptionLevel
-## Y              0          1          2          3
-##   No  0.39370079 0.45275591 0.09448819 0.05905512
-##   Yes 0.69306931 0.18811881 0.01980198 0.09900990
-## 
-##      TotalWorkingYears
-## Y            [,1]      [,2]
-##   No   0.08387346 1.0148290
-##   Yes -0.50513918 0.8471213
-## 
-##      TrainingTimesLastYear
-## Y              [,1]     [,2]
-##   No   0.0467902948 1.034636
-##   Yes -0.0003934576 1.000528
-## 
-##      WorkLifeBalance
-## Y              1          2          3          4
-##   No  0.03937008 0.19685039 0.65551181 0.10826772
-##   Yes 0.12871287 0.20792079 0.56435644 0.09900990
-## 
-##      YearsAtCompany
-## Y            [,1]      [,2]
-##   No   0.09784232 1.0112925
-##   Yes -0.36697899 0.9671206
-## 
-##      YearsInCurrentRole
-## Y          [,1]      [,2]
-##   No   0.122819 1.0334178
-##   Yes -0.415333 0.8529089
-## 
-##      YearsSinceLastPromotion
-## Y            [,1]     [,2]
-##   No   0.04088270 1.021968
-##   Yes -0.08100589 1.025882
-## 
-##      YearsWithCurrManager
-## Y           [,1]      [,2]
-##   No   0.1067086 1.0182814
-##   Yes -0.4076334 0.8881621</code></pre>
-<pre class="r"><code>nb_preds = predict(nb_model, nb_test, type = &#39;class&#39;)
+
+nb_preds = predict(nb_model, nb_test, type = &#39;class&#39;)
 
 caret::confusionMatrix(table(nb_preds, nb_test$Attrition))</code></pre>
 <pre><code>## Confusion Matrix and Statistics
@@ -860,12 +725,10 @@ nb_test_comparision %&gt;% gather() %&gt;% group_by(key) %&gt;% summarise(averag
 ## 1 accuracy      0.793
 ## 2 sensitivity   0.810
 ## 3 specificity   0.705</code></pre>
-<div id="similar-accuracy-to-the-knn-model-but-the-nb-model-is-much-more-well-balanced-and-the-difference-between-the-sensitivity-and-specifity-averages-over-20-iterations-is-much-smaller." class="section level4">
-<h4>Similar accuracy to the KNN model but the NB model is much more well balanced and the difference between the sensitivity and specifity averages over 20 iterations is much smaller.</h4>
+<p>Similar accuracy to the KNN model but the NB model is much more well balanced and the difference between the sensitivity and specifity averages over 20 iterations is much smaller.</p>
 </div>
-</div>
-<div id="linear-regression-to-predict-salary" class="section level3">
-<h3>Linear Regression to Predict Salary</h3>
+<div id="linear-regression-to-predict-salary" class="section level2">
+<h2>Linear Regression to Predict Salary</h2>
 <pre class="r"><code>linear_model = lm(MonthlyIncome ~. , data = train_df)
 
 step_linear_model = step(linear_model, trace = 0)
@@ -881,25 +744,44 @@ summary(step_linear_model)</code></pre>
 ## -3002.8  -616.0   -92.5   616.1  4113.3 
 ## 
 ## Coefficients:
-##                                   Estimate Std. Error t value             Pr(&gt;|t|)    
-## (Intercept)                      3108.8725   264.1249  11.770 &lt; 0.0000000000000002 ***
-## BusinessTravelTravel_Frequently   -26.9121   159.3266  -0.169              0.86592    
-## BusinessTravelTravel_Rarely       205.6971   134.3544   1.531              0.12630    
-## DailyRate                           0.2341     0.1014   2.308              0.02136 *  
-## GenderMale                        124.9316    82.6958   1.511              0.13139    
-## JobLevel2                        1855.8046   165.5301  11.211 &lt; 0.0000000000000002 ***
-## JobLevel3                        5185.8938   220.4970  23.519 &lt; 0.0000000000000002 ***
-## JobLevel4                        8545.6819   328.8593  25.986 &lt; 0.0000000000000002 ***
-## JobLevel5                       11210.6249   402.0333  27.885 &lt; 0.0000000000000002 ***
-## JobRoleHuman Resources          -1052.7841   282.2195  -3.730              0.00021 ***
-## JobRoleLaboratory Technician    -1087.6859   205.0241  -5.305          0.000000159 ***
-## JobRoleManager                   3384.7098   283.1562  11.954 &lt; 0.0000000000000002 ***
-## JobRoleManufacturing Director      40.4401   183.2379   0.221              0.82540    
-## JobRoleResearch Director         3424.1054   259.4474  13.198 &lt; 0.0000000000000002 ***
-## JobRoleResearch Scientist        -921.0786   205.8215  -4.475          0.000009163 ***
-## JobRoleSales Executive           -172.4710   154.9798  -1.113              0.26622    
-## JobRoleSales Representative     -1069.2055   250.8638  -4.262          0.000023568 ***
-## TotalWorkingYears                  39.6384     8.9743   4.417          0.000011911 ***
+##                                   Estimate Std. Error t value
+## (Intercept)                      3108.8725   264.1249  11.770
+## BusinessTravelTravel_Frequently   -26.9121   159.3266  -0.169
+## BusinessTravelTravel_Rarely       205.6971   134.3544   1.531
+## DailyRate                           0.2341     0.1014   2.308
+## GenderMale                        124.9316    82.6958   1.511
+## JobLevel2                        1855.8046   165.5301  11.211
+## JobLevel3                        5185.8938   220.4970  23.519
+## JobLevel4                        8545.6819   328.8593  25.986
+## JobLevel5                       11210.6249   402.0333  27.885
+## JobRoleHuman Resources          -1052.7841   282.2195  -3.730
+## JobRoleLaboratory Technician    -1087.6859   205.0241  -5.305
+## JobRoleManager                   3384.7098   283.1562  11.954
+## JobRoleManufacturing Director      40.4401   183.2379   0.221
+## JobRoleResearch Director         3424.1054   259.4474  13.198
+## JobRoleResearch Scientist        -921.0786   205.8215  -4.475
+## JobRoleSales Executive           -172.4710   154.9798  -1.113
+## JobRoleSales Representative     -1069.2055   250.8638  -4.262
+## TotalWorkingYears                  39.6384     8.9743   4.417
+##                                             Pr(&gt;|t|)    
+## (Intercept)                     &lt; 0.0000000000000002 ***
+## BusinessTravelTravel_Frequently              0.86592    
+## BusinessTravelTravel_Rarely                  0.12630    
+## DailyRate                                    0.02136 *  
+## GenderMale                                   0.13139    
+## JobLevel2                       &lt; 0.0000000000000002 ***
+## JobLevel3                       &lt; 0.0000000000000002 ***
+## JobLevel4                       &lt; 0.0000000000000002 ***
+## JobLevel5                       &lt; 0.0000000000000002 ***
+## JobRoleHuman Resources                       0.00021 ***
+## JobRoleLaboratory Technician             0.000000159 ***
+## JobRoleManager                  &lt; 0.0000000000000002 ***
+## JobRoleManufacturing Director                0.82540    
+## JobRoleResearch Director        &lt; 0.0000000000000002 ***
+## JobRoleResearch Scientist                0.000009163 ***
+## JobRoleSales Executive                       0.26622    
+## JobRoleSales Representative              0.000023568 ***
+## TotalWorkingYears                        0.000011911 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -964,12 +846,10 @@ cor(step_lm_pred, test_df$MonthlyIncome) ^ 2</code></pre>
 ## YearsInCurrentRole              2.4389314985
 ## YearsSinceLastPromotion         3.0031079993
 ## YearsWithCurrManager            2.5915193392</code></pre>
-<div id="using-stepwise-selection-the-linear-regression-model-was-able-to-achieve-an-impressive-95.24-r-squared-and-the-r-squared-for-the-test-set-was-pretty-much-the-same-suggesting-that-even-though-the-r-squared-is-very-high-the-model-is-not-overfitting.-the-adjusted-r-squared-is-essentially-the-same-as-the-r-squared-so-the-model-is-able-to-explain-a-significant-amount-of-variance-with-minimal-variables." class="section level4">
-<h4>Using stepwise selection, the linear regression model was able to achieve an impressive 95.24% r-squared and the r-squared for the test set was pretty much the same, suggesting that even though the r-squared is very high, the model is not overfitting. The adjusted r-squared is essentially the same as the r-squared, so the model is able to explain a significant amount of variance with minimal variables.</h4>
+<p>Using stepwise selection, the linear regression model was able to achieve an impressive 95.24% r-squared and the r-squared for the test set was pretty much the same, suggesting that even though the r-squared is very high, the model is not overfitting. The adjusted r-squared is essentially the same as the r-squared, so the model is able to explain a significant amount of variance with minimal variables.</p>
 </div>
-</div>
-<div id="testing-if-employees-who-left-had-a-different-average-commute-distance-than-employees-who-havent-left" class="section level3">
-<h3>Testing if employees who left had a different average commute distance than employees who haven’t left</h3>
+<div id="testing-if-employees-who-left-had-a-different-average-commute-distance-than-employees-who-havent-left" class="section level2">
+<h2>Testing if employees who left had a different average commute distance than employees who haven’t left</h2>
 <pre class="r"><code>data %&gt;% 
   ggplot(aes(x = DistanceFromHome)) +
   geom_histogram(bins = 10, color = &#39;black&#39;, fill = &#39;dark green&#39;) +
@@ -1018,12 +898,10 @@ att_ttest</code></pre>
 ## sample estimates:
 ##  mean in group No mean in group Yes 
 ##          9.028767         10.957143</code></pre>
-<div id="due-to-the-large-sample-sizes-the-central-limit-thereom-is-met-and-because-we-cannot-assume-equal-variances-i-proceeded-to-conduct-a-welchs-two-sample-t-test.-based-on-the-results-of-the-test-we-are-95-that-the-true-difference-in-means-is-not-equal-0.-furthermore-since-the-mean-travel-distance-for-those-who-left-is-larger-than-those-who-didnt-we-can-say-with-95-that-the-mean-travel-distance-for-employees-who-left-their-job-is-greater-than-the-mean-travel-distance-of-employees-who-remain-at-their-job-p-value-0.01641." class="section level4">
-<h4>Due to the large sample sizes, the Central Limit Thereom is met and because we cannot assume equal variances, I proceeded to conduct a Welch’s two sample t-test. Based on the results of the test, we are 95% that the true difference in means is not equal 0. Furthermore, since the mean travel distance for those who left is larger than those who didn’t, we can say with 95% that the mean travel distance for employees who left their job is greater than the mean travel distance of employees who remain at their job, p-value = 0.01641.</h4>
+<p>Due to the large sample sizes, the Central Limit Thereom is met and because we cannot assume equal variances, I proceeded to conduct a Welch’s two sample t-test. Based on the results of the test, we are 95% that the true difference in means is not equal 0. Furthermore, since the mean travel distance for those who left is larger than those who didn’t, we can say with 95% that the mean travel distance for employees who left their job is greater than the mean travel distance of employees who remain at their job, p-value = 0.01641.</p>
 </div>
-</div>
-<div id="permutation-test-for-comparing-job-satisfaction-for-employees-who-work-overtime-vs-those-who-dont" class="section level3">
-<h3>Permutation Test for comparing Job Satisfaction for employees who work overtime vs those who don’t</h3>
+<div id="permutation-test-for-comparing-job-satisfaction-for-employees-who-work-overtime-vs-those-who-dont" class="section level2">
+<h2>Permutation Test for comparing Job Satisfaction for employees who work overtime vs those who don’t</h2>
 <pre class="r"><code>permutation_test = function(df,categorical_column, result_column, number_permutations = 10000) {
   
   perm_data = df %&gt;% dplyr::select(categorical_column, result_column)
@@ -1101,10 +979,7 @@ wilcox.test(x = as.numeric(x$JobSatisfaction),
 ## sample estimates:
 ## difference in location 
 ##          0.00002894528</code></pre>
-<div id="if-jobsatisfaction-rankings-were-randomly-assigned-to-employees-regardless-of-whether-they-worked-overtime-or-not-we-would-expect-to-see-an-difference-in-means-as-extreme-or-more-extreme-than-our-observed-mean-difference-32.9-of-the-time-suggesting-there-is-not-a-significant-difference-in-job-satisfaction-between-employees-who-work-overtime-and-those-who-do-not.-a-wilcox-ranked-sum-test-also-failed-to-reject-the-null-of-no-difference-in-centers-median-in-this-case." class="section level4">
-<h4>If JobSatisfaction rankings were randomly assigned to employees, regardless of whether they worked overtime or not, we would expect to see an difference in means as extreme or more extreme than our observed mean difference 32.9% of the time, suggesting there is not a significant difference in job satisfaction between employees who work overtime and those who do not. A wilcox ranked sum test also failed to reject the null of no difference in centers, median in this case.</h4>
-</div>
-</div>
+<p>If JobSatisfaction rankings were randomly assigned to employees, regardless of whether they worked overtime or not, we would expect to see an difference in means as extreme or more extreme than our observed mean difference 32.9% of the time, suggesting there is not a significant difference in job satisfaction between employees who work overtime and those who do not. A wilcox ranked sum test also failed to reject the null of no difference in centers, median in this case.</p>
 </div>
 
 
