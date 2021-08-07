@@ -1,0 +1,10 @@
+name: "my-website"
+navbar:
+  title: "My Website"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "DDS Project 1"
+      href: DDS_JR_LM2.html
+    - text: "DDS Project 2"
+      href: DDS_LM_Project2.html
