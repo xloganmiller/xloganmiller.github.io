@@ -433,13 +433,20 @@ Beer_Brew_Combo = merge(Beers,Breweries,c(&quot;Brew_ID&quot;)) </code></pre>
 ## 5       1    Wall&#39;s End    2690 0.048  19                   English Brown Ale     16 NorthGate Brewing  Minneapolis    MN
 ## 6       1  Get Together    2692 0.045  50                        American IPA     16 NorthGate Brewing  Minneapolis    MN</code></pre>
 <pre class="r"><code>tail(Beer_Brew_Combo, 6)</code></pre>
-<pre><code>##      Brew_ID                 Beer_Name Beer_ID   ABV IBU                   Style Ounces                  Brewery_Name          City State
-## 2405     556             Pilsner Ukiah      98 0.055  NA         German Pilsener     12         Ukiah Brewing Company         Ukiah    CA
-## 2406     557  Heinnieweisse Weissebier      52 0.049  NA              Hefeweizen     12       Butternuts Beer and Ale Garrattsville    NY
-## 2407     557         Porkslap Pale Ale      49 0.043  NA American Pale Ale (APA)     12       Butternuts Beer and Ale Garrattsville    NY
-## 2408     557           Snapperhead IPA      51 0.068  NA            American IPA     12       Butternuts Beer and Ale Garrattsville    NY
-## 2409     557         Moo Thunder Stout      50 0.049  NA      Milk / Sweet Stout     12       Butternuts Beer and Ale Garrattsville    NY
-## 2410     558 Urban Wilderness Pale Ale      30 0.049  NA        English Pale Ale     12 Sleeping Lady Brewing Company     Anchorage    AK</code></pre>
+<pre><code>##      Brew_ID                 Beer_Name Beer_ID   ABV IBU                   Style Ounces                  Brewery_Name          City
+## 2405     556             Pilsner Ukiah      98 0.055  NA         German Pilsener     12         Ukiah Brewing Company         Ukiah
+## 2406     557  Heinnieweisse Weissebier      52 0.049  NA              Hefeweizen     12       Butternuts Beer and Ale Garrattsville
+## 2407     557         Porkslap Pale Ale      49 0.043  NA American Pale Ale (APA)     12       Butternuts Beer and Ale Garrattsville
+## 2408     557           Snapperhead IPA      51 0.068  NA            American IPA     12       Butternuts Beer and Ale Garrattsville
+## 2409     557         Moo Thunder Stout      50 0.049  NA      Milk / Sweet Stout     12       Butternuts Beer and Ale Garrattsville
+## 2410     558 Urban Wilderness Pale Ale      30 0.049  NA        English Pale Ale     12 Sleeping Lady Brewing Company     Anchorage
+##      State
+## 2405    CA
+## 2406    NY
+## 2407    NY
+## 2408    NY
+## 2409    NY
+## 2410    AK</code></pre>
 </div>
 <div id="check-missing-values-in-each-column" class="section level2">
 <h2>Check missing values in each column</h2>

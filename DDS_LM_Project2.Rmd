@@ -11,6 +11,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Link to video: https://youtu.be/2o8DzHAcOY8
+
 ## Executive Summary
 
 The goal of this analysis is to provide insights regarding attrition, monthly income, and other metrics. The data and subsequent analysis suggest, but do not necessarily prove, the following:
@@ -508,4 +510,6 @@ wilcox.test(x = as.numeric(x$JobSatisfaction),
                 
 ```
 If JobSatisfaction rankings were randomly assigned to employees, regardless of whether they worked overtime or not, we would expect to see an difference in means as extreme or more extreme than our observed mean difference 32.9% of the time, suggesting there is not a significant difference in job satisfaction between employees who work overtime and those who do not. A wilcox ranked sum test also failed to reject the null of no difference in centers, median in this case.
+
+
 
